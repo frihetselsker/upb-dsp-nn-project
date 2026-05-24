@@ -108,20 +108,20 @@ mfccs = {}
 for c in classes:
     wav_file = df[df.label == c].iloc[0,0]
     signal, rate = librosa.load('wavfiles/'+wav_file, sr = 44100)
-    mask = envelope(signal, rate, 0.0005)
-    signal[mask == False] = 0
+    mask = np.array(envelope(signal, rate, 0.0005))
+    signal = signal[mask]
     signals[c] = signal
     fft[c] = calc_fft(signal, rate)
     
-    bank = logfbank(signal[:rate], rate, nfilt=40, nfft=2048).T
-    fbank[c] = bank
-    mel = mfcc(signal[:rate], rate, numcep=20, nfilt=40, nfft=2048).T
-    mfccs[c] = mel
-    
-    # bank = logfbank(signal[:rate], rate, nfilt=26, nfft=1103).T
+    # bank = logfbank(signal[:rate], rate, nfilt=40, nfft=2048).T
     # fbank[c] = bank
-    # mel = mfcc(signal[:rate], rate, numcep=13, nfilt=26, nfft=1103).T
+    # mel = mfcc(signal[:rate], rate, numcep=20, nfilt=40, nfft=2048).T
     # mfccs[c] = mel
+    
+    bank = logfbank(signal[:rate], rate, nfilt=26, nfft=1103).T
+    fbank[c] = bank
+    mel = mfcc(signal[:rate], rate, numcep=13, nfilt=26, nfft=1103).T
+    mfccs[c] = mel
 
 plot_signals(signals)
 plt.show()
@@ -137,9 +137,9 @@ plt.show()
     
 if len(os.listdir('clean')) == 0:
        for f in tqdm(df.fname):
-           signal, rate = librosa.load('wavfiles/' + f, sr = 44100)
+           signal, rate = librosa.load('wavfiles/' + f, sr = 16000)
            mask = envelope(signal, rate, 0.0005)
-           wavfile.write(filename='clean/' + f, rate=rate, data= signal[mask])
+           wavfile.write(filename='clean/' + f, rate=rate, data= signal)
     
     
     
