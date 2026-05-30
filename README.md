@@ -93,6 +93,8 @@ for f in tqdm(df.fname):
     mask = envelope(signal, rate, 0.0005)
     wavfile.write(filename='clean/' + f, rate=rate, data= signal)
 ```
+
+The full code for this section can be found [here](eda.py).
 ### Data Preparation
 The file `instruments.csv` contains correct labeling for each .wav file. But since the audio files are of different lengths, data normalization should be applied.
 
@@ -465,6 +467,8 @@ LSTM
  Non-trainable params: 0 (0.00 B)
 ```
 
+The whole code for this section can be found [here](model.py).
+
 #### Results
 
 For CNN, it took 17 epochs to train to its best.
@@ -516,6 +520,13 @@ Violin_or_fiddle       0.79      0.88      0.83       262
 ```
 
 ![Confusion Matrix RNN](imgs/conf_matrix_rnn.png)
+
+### References
+- Deep Learning for Audio Classification ([link](https://www.youtube.com/playlist?list=PLhA3b2k8R3t2Ng1WW_7MiXeh1pfQJQi_P))
+- Convolutional Neural Networks from Scratch | In Depth ([link](https://www.youtube.com/watch?v=jDe5BAsT2-Y))
+- Backpropagation in Convolutional Neural Networks (CNNs) ([link](https://www.youtube.com/watch?v=z9hJzduHToc))
+- LSTM Networks - EXPLAINED! ([link](https://www.youtube.com/watch?v=QciIcRxJvsM))
+- Neural Networks: Zero to Hero ([link](https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ))
 
 ## Conclusions
 
