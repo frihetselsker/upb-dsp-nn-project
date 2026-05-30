@@ -11,6 +11,7 @@ from keras.utils import to_categorical
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, classification_report, ConfusionMatrixDisplay
+from sklearn.metrics import accuracy_score
 
 import pickle
 
@@ -56,7 +57,6 @@ def build_rand_feat():
     elif config.mode == 'time':
         X = X.reshape(X.shape[0], X.shape[1], X.shape[2])
     y = to_categorical(y, num_classes=10)
-    config.data = (X, y)
     
     with open(config.p_path, 'wb') as handle:
         pickle.dump(config, handle, protocol=pickle.HIGHEST_PROTOCOL)
@@ -129,7 +129,7 @@ plt.show()
 
 label_names = [str(c) for c in np.unique(df.label)]
 
-config = Config(mode='conv')
+config = Config(mode='time')
 
 if config.mode == 'conv':
     X, y = build_rand_feat()
@@ -169,8 +169,12 @@ early_stop = EarlyStopping(
     restore_best_weights=True
 )
 
-X_train, X_val, y_train, y_val = train_test_split(
-    X, y, test_size=0.1, random_state=42
+X_train, X_temp, y_train, y_temp = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+X_val, X_test, y_val, y_test = train_test_split(
+    X_temp, y_temp, test_size=0.5, random_state=42, stratify=y_temp
 )
 
 history = model.fit(
@@ -183,11 +187,21 @@ history = model.fit(
     class_weight=class_weight
 )
 
-y_pred = model.predict(X_val)
+y_pred = model.predict(X_test)
 y_pred_classes = np.argmax(y_pred, axis=1)
-y_true = np.argmax(y_val, axis=1)
+y_true_classes = np.argmax(y_test, axis=1)
 
-cm = confusion_matrix(y_true, y_pred_classes)
+test_acc = accuracy_score(y_true_classes, y_pred_classes)
+print("Test Accuracy:", test_acc)
+
+print("\nClassification Report:")
+print(classification_report(
+    y_true_classes,
+    y_pred_classes,
+    target_names=label_names
+))
+
+cm = confusion_matrix(y_true_classes, y_pred_classes)
 
 disp = ConfusionMatrixDisplay(
     confusion_matrix=cm,
@@ -197,10 +211,13 @@ disp = ConfusionMatrixDisplay(
 disp.plot(cmap='Blues', xticks_rotation=45)
 plt.show()
 
-print(classification_report(
-    y_true,
+report = classification_report(
+    y_true_classes,
     y_pred_classes,
-    target_names=label_names
-))
+    target_names=label_names,
+    output_dict=True
+)
+
+pd.DataFrame(report).transpose().to_csv("test_classification_report_" + config.mode +  ".csv")
 
 model.save(config.model_path)
