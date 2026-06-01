@@ -29,7 +29,7 @@ It appears that most useful harmonics are below 8 KHz, meaning that everything a
 ### Short-time Fourier Transform
 Since a simple FFT will output all the frequencies found in the whole audio regardless of their position in time, the current strategy should be improved. The idea is to split the audio into small pieces so that found frequencies can obtain position in time and a spectrogram can be built which is essentially a graph with time as an X-axis and frequency as a Y-axis stacking FFT results adjacent to each other.
 
-![Spectrogram](imgs/spec.png)
+![Spectrogram](imgs/spect.png)
 
 But simple splitting is not enough, instead of solely splitting audio into a number of small frames, a windowing with overlapping should be applied which is used by Short-time Fourier Transform algorithm.
 
