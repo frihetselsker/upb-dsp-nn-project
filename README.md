@@ -19,21 +19,21 @@ As it can be seen, it is not quite obvious for user to understand what each grap
 
 ### Fourier Transform
 The very first step that has to be performed is the application of Fast Fourier Transform, an efficient algorithm for calculating Discrete Fourier Transform, which moves the raw recording we obtained from time domain to frequency domain.
-![Fourier Transform Slide](ft_slide.png)
+![Fourier Transform Slide](imgs/ft_slide.png)
 
 Example:
-![Fourier Transform](ft.png)
+![Fourier Transform](imgs/ft.png)
 
 It appears that most useful harmonics are below 8 KHz, meaning that everything above can be discarded in order to save space and make computations faster. The audio is resampled from 44.1 kHz to 16 kHz using `Librosa`. The resampling algorithm applies anti-alias filtering before downsampling, effectively suppressing unwanted high-frequency content.
 
 ### Short-time Fourier Transform
 Since a simple FFT will output all the frequencies found in the whole audio regardless of their position in time, the current strategy should be improved. The idea is to split the audio into small pieces so that found frequencies can obtain position in time and a spectrogram can be built which is essentially a graph with time as an X-axis and frequency as a Y-axis stacking FFT results adjacent to each other.
 
-![Spectrogram](img/spec.png)
+![Spectrogram](imgs/spec.png)
 
 But simple splitting is not enough, instead of solely splitting audio into a number of small frames, a windowing with overlapping should be applied which is used by Short-time Fourier Transform algorithm.
 
-![STFT](img/stft.png)
+![STFT](imgs/stft.png)
 
 And the most signifacant result that we achieve is the **variation of frequency over time**.
 
